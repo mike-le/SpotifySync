@@ -22,6 +22,10 @@
         oauthTemplate = Handlebars.compile(oauthSource),
         oauthPlaceholder = document.getElementById('oauth');
 
+    var playlistsSource = document.getElementById('playlists-template').innerHTML,
+        playlistTemplate = Handlebars.compile(playlistsSource),
+        playlistPlaceholder = document.getElementById('playlists');
+
     var params = getHashParams();
 
     var access_token = params.access_token,
@@ -48,8 +52,19 @@
 
               $('#login').hide();
               $('#loggedin').show();
+
+              $.ajax({
+                url: 'https://api.spotify.com/v1/me/playlists',
+                headers: {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) {
+                  playlistPlaceholder.innerHTML = playlistTemplate(response);
+                }
+            });
             }
         });
+        
       } else {
           // render initial screen
           $('#login').show();
